@@ -8,10 +8,13 @@ import { UserService } from '../../../user.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatRadioChange } from '@angular/material/radio';
 import { COMPONENT_DESCRIPTIONS, POPUP_PLATFORM_VALUES } from '../constants';
+
 enum HostClasification {
   Dedicated = "Dedicated",
   PlatformShared = "Shared Platform",
-  CIOShared = "CIO Shared"}
+  CIOShared = "CIO Shared"
+}
+
 enum Tables {
   dedicatedServersTable = "dedicatedServersTable",
   sharedPlatformServersTable = "sharedPlatformServersTable",
@@ -19,11 +22,14 @@ enum Tables {
   privateCloudTable = "privateCloudTable",
   publicCloudTable = "publicCloudTable",
   appDependencyMigrationTable = "appDependencyMigrationTable",
-  thirdPartyMigrationTable = "thirdPartyMigrationTable"}
+  thirdPartyMigrationTable = "thirdPartyMigrationTable"
+}
+
 @Component({
   selector: 'app-popupform',
   templateUrl: './popupform.component.html',
-  styleUrls: ['./popupform.component.scss']})
+  styleUrls: ['./popupform.component.scss']
+})
 export class PopupFormComponent implements OnInit {
   tableheight: string;
   selectAll: boolean = false;
@@ -56,7 +62,8 @@ export class PopupFormComponent implements OnInit {
     "targetDate":"",
     "platformType": "",
     "confirmed": "",
-    "comments": ""};
+    "comments": ""
+  };
   popupPublicData = {
     // "publicCloudKey": "",
     "componentName": "",
@@ -67,7 +74,8 @@ export class PopupFormComponent implements OnInit {
     "connectivityMoveRequired": "",
     "confirmed": "",
     "targetDate":"",
-    "comments": ""}
+    "comments": ""
+  }
   popupAppDepData = {
     "parentAppId": "",
     "parentAppName": "",
@@ -78,7 +86,8 @@ export class PopupFormComponent implements OnInit {
     "relationshipType": "",
     "impact": "",
     "serviceGroup": "",
-    "comments": ""}
+    "comments": ""
+  }
   platformTypeCategory = {
     dedicatedServersTable: "Application Dedicated Servers",
     sharedPlatformServersTable: "Shared Platform workloads",
@@ -86,53 +95,88 @@ export class PopupFormComponent implements OnInit {
     privateCloudTable: "Private Cloud",
     publicCloudTable: "Public Cloud",
     appDependencyMigrationTable: "App Dependencies",
-    thirdPartyMigrationTable: "Third Party Apps"}
+    thirdPartyMigrationTable: "Third Party Apps"
+  }
   inlineEditItems: any[] = [];
+  // deviceData: any[];
   dedicatedServersData: any[] = [];
   sharedPlatformServersData: any[] = [];
   sharedCIOServersData: any[] = [];
   appDependencyMigrationData: any[] = [];
   thirdPartyMigrationData: any[] = [];
-  isCollapsedObj = {    "dedicatedServersTable": true, "sharedPlatformServersTable": true,
+
+  isCollapsedObj = {
+    "dedicatedServersTable": true, "sharedPlatformServersTable": true,
     "sharedCIOServersTable": true, "privateCloudTable": true,
     "publicCloudTable": true, "appDependencyMigrationTable": true,
-    "thirdPartyMigrationTable": true};
-  isLoadingObj = {    "dedicatedServersTable": false, "sharedPlatformServersTable": false,
+    "thirdPartyMigrationTable": true
+  };
+  isLoadingObj = {
+    "dedicatedServersTable": false, "sharedPlatformServersTable": false,
     "sharedCIOServersTable": false, "privateCloudTable": false,
     "publicCloudTable": false, "appDependencyMigrationTable": false,
-    "thirdPartyMigrationTable": true};
-  isLoadingSaveObj = {"dedicatedServersTable": false, "sharedPlatformServersTable": false,
+    "thirdPartyMigrationTable": true
+  };
+  isLoadingSaveObj = {
+    "dedicatedServersTable": false, "sharedPlatformServersTable": false,
     "sharedCIOServersTable": false, "privateCloudTable": false,
     "publicCloudTable": false, "appDependencyMigrationTable": false,
-    "thirdPartyMigrationTable": false};
-  pageNationObj = {   "dedicatedServersTable": { totalItems: 0, pageSize: 50000, currentPage: 0 },
+    "thirdPartyMigrationTable": false
+  };
+  pageNationObj = {
+    "dedicatedServersTable": { totalItems: 0, pageSize: 50000, currentPage: 0 },
     "sharedPlatformServersTable": { totalItems: 0, pageSize: 50000, currentPage: 0 },
     "sharedCIOServersTable": { totalItems: 0, pageSize: 50000, currentPage: 0 },
     "privateCloudTable": { totalItems: 0, pageSize: 50000, currentPage: 0 },
     "publicCloudTable": { totalItems: 0, pageSize: 50000, currentPage: 0 },
     "appDependencyMigrationTable": { totalItems: 0, pageSize: 50000, currentPage: 0 },
-    "thirdPartyMigrationTable": { totalItems: 0, pageSize: 50000, currentPage: 0 }};
+    "thirdPartyMigrationTable": { totalItems: 0, pageSize: 50000, currentPage: 0 }
+  };
   privateCloudData: any[] = [];
   publicCloudData: any[] = [];
   private selectedRowData: any[];
   isDownloading: boolean = false;
   targetPlatformOptions = POPUP_PLATFORM_VALUES
+
   constructor(public dialogRef: MatDialogRef<PopupFormComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any, private mpServiceService: MpServiceService, private userService: UserService) {}
+    @Inject(MAT_DIALOG_DATA) public data: any, private mpServiceService: MpServiceService, private userService: UserService) {
+  }
+
   clearDDFilters(obj: any) {
     obj.forEach((i: any) => {
-      i['selectedOption'] = [];});}
+      i['selectedOption'] = [];
+    });
+  }
+
   clearFilter(ddItem: any) {
-    ddItem['selectedOption'] = [];}
+    ddItem['selectedOption'] = [];
+  }
+
   selectionChanged(ddItem: any, event: MatSelectChange) {
     event.value.forEach((value: string) => {
       if (!ddItem['selectedOption'].includes(value)) {
-        ddItem['selectedOption'].unshift(value); } });}
-  toDate($ev){return new Date($ev);}
-  selectionChangedpdd(ddItem: any, event: MatSelectChange) { ddItem['selectedOption'] = event.value;
-    this.popupDates['platformType'] = event.value;}
-  isSelected(selectedOption: any, option: string) {  return selectedOption.includes(option)}
-  compareItems(item1: string, item2: string): boolean { return item1 === item2;}
+        ddItem['selectedOption'].unshift(value);
+      }
+    });
+  }
+
+  toDate($ev){
+    return new Date($ev);
+  }
+
+  selectionChangedpdd(ddItem: any, event: MatSelectChange) {
+    ddItem['selectedOption'] = event.value;
+    this.popupDates['platformType'] = event.value;
+  }
+
+  isSelected(selectedOption: any, option: string) {
+    return selectedOption.includes(option)
+  }
+
+  compareItems(item1: string, item2: string): boolean {
+    return item1 === item2;
+  }
+
   filterOptions(ddItem: any, event: KeyboardEvent) {
     if (!event) return;
     const inputElement = event.target as HTMLInputElement;
@@ -140,37 +184,67 @@ export class PopupFormComponent implements OnInit {
       let elementsAtFront = ddItem['options'].filter((obj: any) => (obj['label'].toUpperCase().includes(inputElement.value.toUpperCase()) && !ddItem['selectedOption'].includes(obj['label'])) ? obj['label'] : null);
       let selectedItems = ddItem['options'].filter((obj: any) => ddItem['selectedOption'].includes(obj['value']) ? obj : null);
       ddItem['filteredOptions'] = elementsAtFront.concat(selectedItems);
-    } else {  ddItem['filteredOptions'] = [];}}
-  getPopupDatesKeys() { return Object.keys(this.popupDates);}
+    } else {
+      ddItem['filteredOptions'] = [];
+    }
+  }
+
+
+  getPopupDatesKeys() {
+    return Object.keys(this.popupDates);
+  }
+
   closePopup() {
     this.showPopup = false;
     Object.keys(this.popupDates).forEach((key: string) => {
-      this.popupDates[key] = ""; })}
+      this.popupDates[key] = "";
+    })
+  }
+
   closePublicPopup() {
     this.showPublicPopup = false;
     Object.keys(this.popupPublicData).forEach((key: string) => {
-      this.popupPublicData[key] = ""; })}
+      this.popupPublicData[key] = "";
+    })
+  }
+
   closeAppDepPopup() {
     this.showAppDepPopup = false;
     Object.keys(this.popupAppDepData).forEach((key: string) => {
-      this.popupAppDepData[key] = ""; })}
+      this.popupAppDepData[key] = "";
+    })
+  }
+
   platFormDDValidation(): boolean {
     let out: boolean = false;
     let unselectedInputs = [];
+
     if(!this.popupDates['targetPlatform']){
-      unselectedInputs.push('targetPlatform') }
+      unselectedInputs.push('targetPlatform')
+    }
+
     if(this.popupDates['targetPlatform'] !== 'No-Plan' && !this.popupDates['targetDate']){
-      unselectedInputs.push('targetDate') }
+      unselectedInputs.push('targetDate')
+    }
+
     if((this.platformTypeFields.includes(this.popupDates['targetPlatform'])) && !this.popupDates['platformType']){
-      unselectedInputs.push('platformType') }
+      unselectedInputs.push('platformType')
+    }
+
     if(!this.popupDates['confirmed']){
-      unselectedInputs.push('confirmed') }
+      unselectedInputs.push('confirmed')
+    }
+  
     // console.log("confirmed", this.popupDates['confirmed']);
     if (unselectedInputs.length === 0) {
-      out = true; } else {
+      out = true;
+    } else {
       out = false;
-      this.inputValidationMessage = "Please select " + unselectedInputs.join(', ') + " field/s."; }
-    return out;}
+      this.inputValidationMessage = "Please select " + unselectedInputs.join(', ') + " field/s.";
+    }
+    return out;
+  }
+
   getDatabyTablename(tablename: Tables) {
     switch (tablename) {
       case Tables.dedicatedServersTable:
@@ -188,16 +262,22 @@ export class PopupFormComponent implements OnInit {
       case Tables.thirdPartyMigrationTable:
         return this.thirdPartyMigrationData;
       default:
-        return [];   } }
+        return [];
+    }
+  }
+
   saveAppDepData() {
     if (!this.popupAppDepData['serviceGroup']) {
       this.inputValidationMessage = "Select the service Group";
       this.showValidation = true;
-      return;   } else if (!this.popupAppDepData['confirmed']) {
+      return;
+    } else if (!this.popupAppDepData['confirmed']) {
       this.inputValidationMessage = "Select the confirmed status";
       this.showValidation = true;
-      return;  } else {
-      this.showValidation = false; }
+      return;
+    } else {
+      this.showValidation = false;
+    }
     let savedDevicelist = [];
     this.selectedRowData.forEach((device: any) => {
       let tempDevice = { ...device };
@@ -205,17 +285,25 @@ export class PopupFormComponent implements OnInit {
       Object.keys(this.popupAppDepData).forEach((key: string) => {
         if (['serviceGroup', 'confirmed', 'comments'].includes(key) && this.popupAppDepData[key]) {
           tempDevice[key] = this.popupAppDepData[key];
-          changed = true;     }   });
+          changed = true;
+        }
+      });
       if (changed) {
-        savedDevicelist.push(tempDevice);   }  });
-    this.saveAppDepMigData(savedDevicelist);}
+        savedDevicelist.push(tempDevice);
+      }
+    });
+    this.saveAppDepMigData(savedDevicelist);
+  }
+
   savePublicData() {
     console.log(this.popupPublicData);
     if (!this.popupPublicData['confirmed']) {
       this.inputValidationMessage = "Select the confirmed status";
       this.showValidation = true;
-      return;   } else {
-      this.showValidation = false;  }
+      return;
+    } else {
+      this.showValidation = false;
+    }
     let savedDevicelist = [];
     this.selectedRowData.forEach((device: any) => {
       let tempDevice = { ...device };
@@ -226,16 +314,28 @@ export class PopupFormComponent implements OnInit {
           changed = true;
         } else if (['connectivityMoveRequired'].includes(key)) {
           tempDevice[key] = this.popupPublicData[key] === 'Yes' ? true : (this.popupPublicData[key] !== "" || this.popupPublicData[key] !== null)? false : null;
-          changed = true;      }     });
+          changed = true;
+        }
+      });
       if (changed) {
-        savedDevicelist.push(tempDevice);     }  });
-    this.savePublicCloudData(savedDevicelist); }
+        savedDevicelist.push(tempDevice);
+      }
+    });
+    this.savePublicCloudData(savedDevicelist);
+  }
+
   savePopupDates() {
     let inputValidation: boolean = this.platFormDDValidation();
     this.showValidation = !inputValidation;
     if (!inputValidation) {
-      return;    }
+      return;
+    }
+    // if (!this.popupConfirmation) {
+    //   this.popupConfirmation = true;
+    //   return;
+    // }
     let savedDevicelist = [];
+
     this.selectedRowData.forEach((device: any) => {
       let tempDevice = { ...device };
       let changed = false;
@@ -247,46 +347,75 @@ export class PopupFormComponent implements OnInit {
         if(key === 'targetPlatform'){
           tempDevice[key] = this.popupDates[key];
           if(this.platformTypeFields.includes(this.popupDates[key])){
-            tempDevice['platformType'] = this.popupDates['platformType'];        }
-          changed = true;     } else if(key === 'targetDate'){
+            tempDevice['platformType'] = this.popupDates['platformType'];
+          }
+          changed = true;
+        } else if(key === 'targetDate'){
           this.targetPlatformOptions.forEach((platform) => {
             if(platform.key === this.popupDates['targetPlatform']){
-              tempDevice[platform.dateFieldName] = this.popupDates[key]           } else {
-              tempDevice[platform.dateFieldName] = ""          }       })
+              tempDevice[platform.dateFieldName] = this.popupDates[key]
+            } else {
+              tempDevice[platform.dateFieldName] = ""
+            }
+          })  
           changed = true;
-          dateChanged = true;        } else if (key === 'comments' || key === 'confirmed') {
+          dateChanged = true;
+        } else if (key === 'comments' || key === 'confirmed') {
           if (this.popupDates[key]) {
             tempDevice[key] = this.popupDates[key];
-            changed = true;          }        } else {
-          tempDevice[key] = "";       }      });
-      if (changed) {        savedDevicelist.push(tempDevice);      }    });
+            changed = true;
+          }
+        } else {
+          tempDevice[key] = "";
+        }
+      });
+      if (changed) {
+        savedDevicelist.push(tempDevice);
+      }
+    });
     if (this.currentEditingTable === Tables.privateCloudTable) {
       this.savePrivateCloudData(savedDevicelist);
     } else if (this.currentEditingTable === Tables.thirdPartyMigrationTable) {
       this.saveThirdPartyData(savedDevicelist);
     }else if ([Tables.dedicatedServersTable, Tables.sharedPlatformServersTable, Tables.sharedCIOServersTable].includes(this.currentEditingTable)) {
-      this.saveDeviceData(savedDevicelist, this.currentEditingTable);   }  }
+      this.saveDeviceData(savedDevicelist, this.currentEditingTable);
+    }
+  }
+
   successSavePopupDates(tablename: Tables) {
     let tempData = this.getDatabyTablename(tablename);
     this.selectedRowData.forEach((rowData: any) => {
       tempData.forEach((device: any) => {
-        if ((device['dcmHostId'] && device['dcmHostId'] === rowData['dcmHostId'])
-            || (device['privateCloudKey'] && device['privateCloudKey'] === rowData['privateCloudKey'])
+        if ((device['dcmHostId'] && device['dcmHostId'] === rowData['dcmHostId']) 
+            || (device['privateCloudKey'] && device['privateCloudKey'] === rowData['privateCloudKey']) 
             || (device['key'] && device['key'] === rowData['key'])) {
           this.targetPlatformOptions.forEach((platform) => {
             if(platform.key === this.popupDates['targetPlatform']){
               device[platform.dateFieldName] = this.popupDates['targetDate']
-            } else {    device[platform.dateFieldName] = ""           }         })
+            } else {
+              device[platform.dateFieldName] = ""
+            }
+          }) 
+
           if(this.platformTypeFields.includes(this.popupDates['targetPlatform'])){
             device['platformType'] = this.popupDates['platformType'] ? this.popupDates['platformType'] : device['platformType'];
-          } else {            device['platformType'] = '';          }
+          } else {
+            device['platformType'] = '';
+          }
           device['targetPlatform'] = this.popupDates['targetPlatform'] ? this.popupDates['targetPlatform'] : device['targetPlatform'];
+          
           device['comments'] = this.popupDates['comments'] ? this.popupDates['comments'] : device['comments'];
-          device['confirmed'] = this.popupDates['confirmed'] ? this.popupDates['confirmed'] : device['confirmed'];        }     })   });
+          device['confirmed'] = this.popupDates['confirmed'] ? this.popupDates['confirmed'] : device['confirmed'];
+        }
+      })
+    });
     Object.keys(this.popupDates).forEach((key: string) => {
-      this.popupDates[key] = "";    })
+      this.popupDates[key] = "";
+    })
     this.showPopup = false;
-    this.updateDeviceData(tablename, tempData);  }
+    this.updateDeviceData(tablename, tempData);
+  }
+
   updateDeviceData(tableName: Tables, updatedData: any) {
     switch (tableName) {
       case Tables.dedicatedServersTable:
@@ -309,7 +438,10 @@ export class PopupFormComponent implements OnInit {
         break;
       case Tables.thirdPartyMigrationTable:
         this.thirdPartyMigrationData = [...updatedData]
-        break;    }  }
+        break;
+    }
+  }
+
   successSavePublicCloud() {
     let tempData = this.getDatabyTablename(Tables.publicCloudTable);
     this.selectedRowData.forEach((rowData: any) => {
@@ -319,11 +451,22 @@ export class PopupFormComponent implements OnInit {
             if (['confirmed', 'comments', 'targetDate'].includes(key)) {
               device[key] = this.popupPublicData[key];
             } else if (['connectivityMoveRequired'].includes(key)) {
-              device[key] = this.popupPublicData[key] === 'Yes' ? 'Yes' : (this.popupPublicData[key] !== "" || this.popupPublicData[key] !== null)? 'No' : '';           }         });       }      });    })
+              device[key] = this.popupPublicData[key] === 'Yes' ? 'Yes' : (this.popupPublicData[key] !== "" || this.popupPublicData[key] !== null)? 'No' : '';
+            }
+          });
+        }
+      });
+    })
+
     Object.keys(this.popupPublicData).forEach((key: string) => {
-      this.popupPublicData[key] = "";   })
+      this.popupPublicData[key] = "";
+    })
     this.showPublicPopup = false;
-    this.updateDeviceData(Tables.publicCloudTable, tempData);  }
+    this.updateDeviceData(Tables.publicCloudTable, tempData);
+
+  }
+
+
   successSaveAppDep() {
     let tempData = this.getDatabyTablename(Tables.appDependencyMigrationTable);
     this.selectedRowData.forEach((rowData: any) => {
@@ -331,11 +474,19 @@ export class PopupFormComponent implements OnInit {
         if (device['relationshipKey'] && device['relationshipKey'] === rowData['relationshipKey']) {
           Object.keys(this.popupAppDepData).forEach((key: string) => {
             if (['serviceGroup', 'confirmed', 'comments'].includes(key) && this.popupAppDepData[key])
-              device[key] = this.popupAppDepData[key];         });        }      });   })
+              device[key] = this.popupAppDepData[key];
+          });
+        }
+      });
+    })
+
     Object.keys(this.popupAppDepData).forEach((key: string) => {
-      this.popupAppDepData[key] = "";    })
+      this.popupAppDepData[key] = "";
+    })
     this.showAppDepPopup = false;
-    this.updateDeviceData(Tables.appDependencyMigrationTable, tempData); }
+    this.updateDeviceData(Tables.appDependencyMigrationTable, tempData);
+  }
+
   onPageChange(event: { pageEvent: PageEvent, table: string }) {
     this.currentPage = event.pageEvent.pageIndex;
     this.pageSize = event.pageEvent.pageSize;
@@ -372,7 +523,10 @@ export class PopupFormComponent implements OnInit {
         this.getAppDependencyDataByFilter(false);
         break;
       default:
-        break;   }  }
+        break;
+    }
+  }
+
   editInPopup(data: any, tableName: string) {
     switch (tableName) {
       case Tables.dedicatedServersTable:
@@ -386,45 +540,69 @@ export class PopupFormComponent implements OnInit {
         this.editPublicSelected({ data: [data] })
         break;
       case Tables.appDependencyMigrationTable:
-        this.editAppDepSelected({ data: [data] })    }  }
+        this.editAppDepSelected({ data: [data] })
+    }
+  }
+
   editSelected(event: any, classification?: string) {
+
     this.currentEditingTable = event['table'];
     this.data.platformDropdown.forEach((ddItem: string) => {
-      ddItem['selectedOption'] = "";    });
+      ddItem['selectedOption'] = "";
+    });
+
     this.showValidation = false;
     this.selectedRowData = event.data;
+
     if (this.selectedRowData.length === 1) {
       if(this.selectedRowData[0]['targetPlatform'].split(';').length === 1){
         this.popupDates['targetPlatform'] = this.selectedRowData[0]['targetPlatform'];
         this.popupDates['targetDate'] = this.selectedRowData[0][this.targetPlatformOptions.find((val) => val.key === this.selectedRowData[0]['targetPlatform']).dateFieldName];
-        this.popupDates['platformType'] = this.selectedRowData[0]['platformType'];      }
+        this.popupDates['platformType'] = this.selectedRowData[0]['platformType'];
+      }
       this.popupDates['comments'] = this.selectedRowData[0]['comments'];
-      this.popupDates['confirmed'] = this.selectedRowData[0]['confirmed'];    }
-    this.showPopup = true;  }
+      this.popupDates['confirmed'] = this.selectedRowData[0]['confirmed'];
+    }
+    this.showPopup = true;
+  }
+
   editPublicSelected(event: any) {
     this.popupConfirmation = false;
     this.showValidation = false;
     this.selectedRowData = event.data;
     if (this.selectedRowData.length === 1) {
       Object.keys(this.popupPublicData).forEach((key: string) => {
-        this.popupPublicData[key] = this.selectedRowData[0][key];     })    }
-    this.showPublicPopup = true; }
+        this.popupPublicData[key] = this.selectedRowData[0][key];
+      })
+    }
+    this.showPublicPopup = true;
+  }
+
   editAppDepSelected(event: any) {
     this.popupConfirmation = false;
     this.showValidation = false;
     this.selectedRowData = event.data;
     if (this.selectedRowData.length === 1) {
       Object.keys(this.popupAppDepData).forEach((key: string) => {
-        this.popupAppDepData[key] = this.selectedRowData[0][key];      })    }
-    this.showAppDepPopup = true; }
+        this.popupAppDepData[key] = this.selectedRowData[0][key];
+      })
+    }
+    this.showAppDepPopup = true;
+  }
+
   getSearchandFilters() {
     let filter = {};
     filter['appId'] = [this.data.mgItem.appId];
     if (Array.isArray(this.data.deviceDropDown)) {
       for (let i of this.data.deviceDropDown) {
         if (i['selectedOption'] && i['selectedOption'].length > 0 && i['selectedOption'][0]) {
-          filter[i['categoryID']] = i['selectedOption'];        }      }    }
-    return filter;  }
+          filter[i['categoryID']] = i['selectedOption'];
+        }
+      }
+    }
+    return filter;
+  }
+
   getDeviceDataByFilter(resetpage: boolean, hostClassification: string) {
     let table: string = "";
     switch (hostClassification) {
@@ -438,34 +616,50 @@ export class PopupFormComponent implements OnInit {
         table = Tables.sharedCIOServersTable;
         break;
       default:
-        break;    }
+        break;
+    }
     let filter = this.getSearchandFilters();
     let pageSize = this.pageNationObj[table].pageSize;
     let currentPage = this.pageNationObj[table].currentPage;
     filter["hostClassification"] = [hostClassification];
     if (resetpage) {
-      this.pageNationObj[table].currentPage = 0;    }
-    this.getDeviceData(pageSize, currentPage, hostClassification, filter);  }
+      this.pageNationObj[table].currentPage = 0;
+    }
+    this.getDeviceData(pageSize, currentPage, hostClassification, filter);
+  }
+
   getPrivateCloudDataByFilter(resetpage: boolean) {
     if (resetpage) {
-      this.pageNationObj[Tables.privateCloudTable].currentPage = 0;   }
+      this.pageNationObj[Tables.privateCloudTable].currentPage = 0;
+    }
     let filter = this.getSearchandFilters();
-    this.getPrivateCloudData(this.pageNationObj[Tables.privateCloudTable].pageSize, this.pageNationObj[Tables.privateCloudTable].currentPage, filter);  }
+    this.getPrivateCloudData(this.pageNationObj[Tables.privateCloudTable].pageSize, this.pageNationObj[Tables.privateCloudTable].currentPage, filter);
+  }
+
   getPublicCloudDataByFilter(resetpage: boolean) {
     if (resetpage) {
-      this.pageNationObj[Tables.publicCloudTable].currentPage = 0;    }
+      this.pageNationObj[Tables.publicCloudTable].currentPage = 0;
+    }
     let filter = this.getSearchandFilters();
-    this.getPublicCloudData(this.pageNationObj[Tables.publicCloudTable].pageSize, this.pageNationObj[Tables.publicCloudTable].currentPage, filter);  }
+    this.getPublicCloudData(this.pageNationObj[Tables.publicCloudTable].pageSize, this.pageNationObj[Tables.publicCloudTable].currentPage, filter);
+  }
+
   getAppDependencyDataByFilter(resetpage: boolean) {
     if (resetpage) {
-      this.pageNationObj[Tables.appDependencyMigrationTable].currentPage = 0;    }
+      this.pageNationObj[Tables.appDependencyMigrationTable].currentPage = 0;
+    }
     let filter = this.getSearchandFilters();
-    this.getAppDependencyData(this.pageNationObj[Tables.appDependencyMigrationTable].pageSize, this.pageNationObj[Tables.appDependencyMigrationTable].currentPage, filter);  }
+    this.getAppDependencyData(this.pageNationObj[Tables.appDependencyMigrationTable].pageSize, this.pageNationObj[Tables.appDependencyMigrationTable].currentPage, filter);
+  }
+
   getThirdPartyDataByFilter(resetpage: boolean) {
     if (resetpage) {
-      this.pageNationObj[Tables.thirdPartyMigrationTable].currentPage = 0;    }
+      this.pageNationObj[Tables.thirdPartyMigrationTable].currentPage = 0;
+    }
     let filter = this.getSearchandFilters();
-    this.getThirdPartyData(this.pageNationObj[Tables.thirdPartyMigrationTable].pageSize, this.pageNationObj[Tables.thirdPartyMigrationTable].currentPage, filter);  }
+    this.getThirdPartyData(this.pageNationObj[Tables.thirdPartyMigrationTable].pageSize, this.pageNationObj[Tables.thirdPartyMigrationTable].currentPage, filter);
+  }
+
   getAppDependencyData(pageSize: number, currentPage: number, filter: {}): void {
     // this.isLoading = true;
     this.isLoadingObj[Tables.appDependencyMigrationTable] = true;
@@ -473,26 +667,37 @@ export class PopupFormComponent implements OnInit {
       .then((res: any) => {
         if (res.rowCount === 0) {
           this.appDependencyMigrationData = [];
-          return;        }
+          return;
+        }
         this.pageNationObj[Tables.appDependencyMigrationTable].totalItems = res.rowCount;
         this.appDependencyMigrationData = res.data.map((d: any, index: number) => ({
           ...d,
-          index: index,        }))      })
+          index: index,
+        }))
+      })
       .catch(err => console.error("error while getting App Dependency Data", err))
-      .finally(() => { this.isLoadingObj[Tables.appDependencyMigrationTable] = false; this.searched = true; })  }
+      .finally(() => { this.isLoadingObj[Tables.appDependencyMigrationTable] = false; this.searched = true; })
+  }
+
   getThirdPartyData(pageSize: number, currentPage: number, filter: {}): void {
     this.isLoadingObj[Tables.thirdPartyMigrationTable] = true;
     this.mpServiceService.getThirdPartyMigrationData(pageSize, currentPage, filter)
       .then((res: any) => {
         if (res.rowCount === 0 && !res.data) {
           this.thirdPartyMigrationData = [];
-          return;        }
+          return;
+        }
         this.pageNationObj[Tables.thirdPartyMigrationTable].totalItems = res.rowCount;
         this.thirdPartyMigrationData = res.data.map((d: any, index: number) => ({
           ...d,
-          index: index,        }))      })
+          index: index,
+        }))
+      })
       .catch(err => console.error("error while getting Third Party Data", err))
-      .finally(() => { this.isLoadingObj[Tables.thirdPartyMigrationTable] = false; this.searched = true; })  }
+      .finally(() => { this.isLoadingObj[Tables.thirdPartyMigrationTable] = false; this.searched = true; })
+  }
+
+
   getPublicCloudData(pageSize: number, currentPage: number, filter: {}): void {
     // this.isLoading = true;
     this.isLoadingObj[Tables.publicCloudTable] = true;
@@ -500,13 +705,18 @@ export class PopupFormComponent implements OnInit {
       .then((res: any) => {
         if (res.rowCount === 0) {
           this.publicCloudData = [];
-          return;        }
+          return;
+        }
         this.pageNationObj[Tables.publicCloudTable].totalItems = res.rowCount;
         this.publicCloudData = res.data.map((d: any, index: number) => ({
           ...d,
-          index: index,        }))      })
+          index: index,
+        }))
+      })
       .catch(err => console.error("error while getting Public Cloud Data", err))
-      .finally(() => { this.isLoadingObj[Tables.publicCloudTable] = false; this.searched = true; })  }
+      .finally(() => { this.isLoadingObj[Tables.publicCloudTable] = false; this.searched = true; })
+  }
+
   getPrivateCloudData(pageSize: number, currentPage: number, filter: {}): void {
     // this.isLoading = true;
     this.isLoadingObj[Tables.privateCloudTable] = true;
@@ -514,7 +724,8 @@ export class PopupFormComponent implements OnInit {
       .then((res: any) => {
         if (res.rowCount === 0) {
           this.privateCloudData = [];
-          return;       }
+          return;
+        }
         this.pageNationObj[Tables.privateCloudTable].totalItems = res.rowCount;
         this.privateCloudData = res.data.map((d: any, index: number) => ({
           ...d,
@@ -527,15 +738,23 @@ export class PopupFormComponent implements OnInit {
           retireDate: d.retireDate ? new Date(d.retireDate).toISOString().slice(0, 10) : null,
           physMgrDate: d.physMgrDate ? new Date(d.physMgrDate).toISOString().slice(0, 10) : null,
           mainFrmMgrDate: d.mainFrmMgrDate ? new Date(d.mainFrmMgrDate).toISOString().slice(0, 10) : null,
-          thrdprtyHostServMgrDate: d.thrdprtyHostServMgrDate ? new Date(d.thrdprtyHostServMgrDate).toISOString().slice(0, 10) : null        }))      })
+          thrdprtyHostServMgrDate: d.thrdprtyHostServMgrDate ? new Date(d.thrdprtyHostServMgrDate).toISOString().slice(0, 10) : null
+        }))
+      })
       .catch(err => console.error("error while getting Private Cloud Data", err))
-      .finally(() => { this.isLoadingObj[Tables.privateCloudTable] = false; this.searched = true; })  }
+      .finally(() => { this.isLoadingObj[Tables.privateCloudTable] = false; this.searched = true; })
+  }
+
   onCancel(): void {
     this.data.submitted.isSubmitted = false;
-    this.dialogRef.close();  }
+    this.dialogRef.close();
+  }
+
   onSubmit(): void {
     this.data.submitted.isSubmitted = true;
-    this.dialogRef.close(this.data.mgItem);  }
+    this.dialogRef.close(this.data.mgItem);
+  }
+
   ngOnInit(): void {
     if (this.data.deviceDropDown) {
       this.data.deviceDropDown.forEach((i: any) => {
@@ -548,20 +767,40 @@ export class PopupFormComponent implements OnInit {
             break;
           case "datacenter":
             i['selectedOption'] = [this.data.mgItem.dataCenter];
-            break;        }      });    }
-    this.getAllDeviceData(false);  }
+            break;
+        }
+      });
+    }
+    //"CIO Shared", "Dedicated", "Platform Shared"
+    this.getAllDeviceData(false);
+  }
+
   getAllDeviceData(resetpage: boolean) {
     this.getDeviceDataByFilter(resetpage, HostClasification.Dedicated);
     this.getDeviceDataByFilter(resetpage, HostClasification.PlatformShared);
     this.getDeviceDataByFilter(resetpage, HostClasification.CIOShared);
+    //call private and public cloud data
     this.getPrivateCloudDataByFilter(resetpage);
     this.getPublicCloudDataByFilter(resetpage);
     this.getAppDependencyDataByFilter(resetpage);
-    this.getThirdPartyDataByFilter(resetpage)  }
-  updateTableHeight() {  }
+    //call third party data
+    this.getThirdPartyDataByFilter(resetpage)
+  }
+
+  updateTableHeight() {
+    // const rowcount = this.deviceData.length;
+    // if (rowcount <= 5) {
+    //   this.tableheight = 'auto';
+    // } else {
+    //   this.tableheight = '70vh'
+    // }
+  }
+
   @HostListener('window:resize', ['$event'])
   onResize(event) {
-    this.updateTableHeight();  }
+    this.updateTableHeight();
+  }
+
   isEditingFieldObj() {
     return {
       "dcmHostId": false,
@@ -581,7 +820,10 @@ export class PopupFormComponent implements OnInit {
       "physMgrDate": false,
       "mainFrmMgrDate": false,
       "thrdprtyHostServMgrDate": false,
-      "comments": false    }  }
+      "comments": false
+    }
+  }
+
   getDeviceData(pageSize: number, currentPage: number, hostClassification: string, filter: {}): void {
     this.isLoading = true;
     switch (hostClassification) {
@@ -595,7 +837,8 @@ export class PopupFormComponent implements OnInit {
         this.isLoadingObj[Tables.sharedCIOServersTable] = true;
         break;
       default:
-        break;    }
+        break;
+    }
     this.mpServiceService.getDevicesData(pageSize, currentPage, filter)
       .then((res: any) => {
         let ret: boolean = false;
@@ -603,22 +846,28 @@ export class PopupFormComponent implements OnInit {
           case HostClasification.Dedicated:
             if (res["dedicatedRowCount"] === 0) {
               this.dedicatedServersData = [];
-              ret = true;            }
+              ret = true;
+            }
             break;
           case HostClasification.PlatformShared:
             if (res["sharedPlatformRowCount"] === 0) {
               this.sharedPlatformServersData = [];
-              ret = true;            }
+              ret = true;
+            }
             break;
           case HostClasification.CIOShared:
             if (res["cioSharedRowCount"] === 0) {
               this.sharedCIOServersData = [];
-              ret = true;            }
+              ret = true;
+            }
             break;
           default:
-            break;        }
+            // this.deviceData = res['data'];
+            break;
+        }
         if (ret) {
-          return;        }
+          return;
+        }
         this.totalItems = res.rowCount;
         res.data = res.data.map((d: any, index: number) => ({
           ...d,
@@ -634,7 +883,9 @@ export class PopupFormComponent implements OnInit {
           retireDate: d.retireDate ? new Date(d.retireDate).toISOString().slice(0, 10) : null,
           physMgrDate: d.physMgrDate ? new Date(d.physMgrDate).toISOString().slice(0, 10) : null,
           mainFrmMgrDate: d.mainFrmMgrDate ? new Date(d.mainFrmMgrDate).toISOString().slice(0, 10) : null,
-          thrdprtyHostServMgrDate: d.thrdprtyHostServMgrDate ? new Date(d.thrdprtyHostServMgrDate).toISOString().slice(0, 10) : null        }))
+          thrdprtyHostServMgrDate: d.thrdprtyHostServMgrDate ? new Date(d.thrdprtyHostServMgrDate).toISOString().slice(0, 10) : null
+
+        }))
         switch (hostClassification) {
           case HostClasification.Dedicated:
             this.dedicatedServersData = res['data'];
@@ -649,7 +900,11 @@ export class PopupFormComponent implements OnInit {
             this.pageNationObj[Tables.sharedCIOServersTable].totalItems = res.cioSharedRowCount;
             break;
           default:
-            break;        }      })
+            // this.deviceData = res['data'];
+            break;
+        }
+        // this.updateTableHeight();
+      })
       .catch(err => console.error("error while getting Device Data", err))
       .finally(() => {
         this.isLoading = false;
@@ -665,7 +920,10 @@ export class PopupFormComponent implements OnInit {
             break;
           default:
             break;
-        }; this.searched = true;      })  }
+        }; this.searched = true;
+      })
+  }
+
   buildDeviceSaveReq(deviceList: any, TableName?: Tables) {
     let req = {};
     req['appId'] = this.data.mgItem.appId;
@@ -676,6 +934,7 @@ export class PopupFormComponent implements OnInit {
       if (TableName && TableName === Tables.privateCloudTable) {
         out["privateCloudKey"] = device['privateCloudKey'] ? device['privateCloudKey'] : null;
       }
+      
       out["dcmHostId"] = device['dcmHostId'] ? device['dcmHostId'] : null;
       out["deviceName"] = device['deviceName'] ? device['deviceName'] : null;
       out["environment"] = device['environment'] ? device['environment'] : null;
@@ -695,8 +954,11 @@ export class PopupFormComponent implements OnInit {
       out["thrdprtyHostServMgrDate"] = device['thrdprtyHostServMgrDate'] ? device['thrdprtyHostServMgrDate'] : null;
       out["comments"] = device['comments'] ? device['comments'] : null;
       out["platformType"] = device['platformType'] ? device['platformType'] : null;
-      return out;    });
-    return req;  }
+      return out;
+    });
+    return req;
+  }
+
   buildAppDepMigSaveReq(deviceList: any) {
     let req = {};
     req['appId'] = this.data.mgItem.appId;
@@ -715,8 +977,11 @@ export class PopupFormComponent implements OnInit {
       "confirmed": device['confirmed'] ? device['confirmed'] : null,
       "comments": device['comments'] ? device['comments'] : null,
       "UpdatedBy": this.userService.getUserName(),
-      "updatedOn": new Date().toISOString().slice(0, 10)    }));
-    return req;  }
+      "updatedOn": new Date().toISOString().slice(0, 10)
+    }));
+    return req;
+  }
+
   buildPublicCloudSaveReq(deviceList: any) {
     let req = {};
     req['appId'] = this.data.mgItem.appId;
@@ -731,15 +996,18 @@ export class PopupFormComponent implements OnInit {
       "connectivityMoveRequired": device['connectivityMoveRequired'],
       "confirmed": device['confirmed'] ? device['confirmed'] : null,
       "targetDate": device['targetDate'] ? device['targetDate'] : null,
-      "comments": device['comments'] ? device['comments'] : null    }));
+      "comments": device['comments'] ? device['comments'] : null
+    }));
     return req;
   }
+
   buildThirdPartyDeviceSaveReq(deviceList: any) {
     let req = {};
     req['appId'] = this.data.mgItem.appId;
     req['updatedBy'] = this.userService.getUserName();
     req['thirdPartyApplicationList'] = deviceList.map((device: any) => {
       let out = {};
+      
       out["key"] = device['key'] ? device['key'] : null;
       out["targetPlatform"] = device['targetPlatform'] ? device['targetPlatform'] : null;
       out["confirmed"] = device['confirmed'] ? device['confirmed'] : null;
@@ -758,6 +1026,7 @@ export class PopupFormComponent implements OnInit {
     });
     return req;
   }
+
   saveDeviceData(deviceList: any[], tablename: Tables, frominline?: boolean) {
     if (deviceList.length === 0) return;
     this.isLoadingSaveObj[tablename] = true;
@@ -767,6 +1036,7 @@ export class PopupFormComponent implements OnInit {
       .catch((err) => { console.log("error while saving device data", err) })
       .finally(() => { this.isLoadingSaveObj[tablename] = false; });
   }
+
   savePrivateCloudData(deviceList: any[], frominline?: boolean) {
     if (deviceList.length === 0) return;
     let req = this.buildDeviceSaveReq(deviceList, Tables.privateCloudTable);
@@ -779,6 +1049,7 @@ export class PopupFormComponent implements OnInit {
       .catch((err) => { console.log("error while saving private cloud data", err) })
       .finally(() => { this.isLoadingSaveObj[Tables.privateCloudTable] = false; })
   }
+
   saveThirdPartyData(deviceList: any[], frominline?: boolean) {
     if (deviceList.length === 0) return;
     let req = this.buildThirdPartyDeviceSaveReq(deviceList);
@@ -791,6 +1062,7 @@ export class PopupFormComponent implements OnInit {
       .catch((err) => { console.log("error while saving third party data", err) })
       .finally(() => { this.isLoadingSaveObj[Tables.thirdPartyMigrationTable] = false; })
   }
+
   savePublicCloudData(deviceList: any[], frominline?: boolean) {
     if (deviceList.length === 0) return;
     let req = this.buildPublicCloudSaveReq(deviceList);
@@ -803,6 +1075,7 @@ export class PopupFormComponent implements OnInit {
       .catch((err) => { console.log("error while saving public cloud data", err) })
       .finally(() => { this.isLoadingSaveObj[Tables.publicCloudTable] = false; })
   }
+
   saveAppDepMigData(deviceList: any[], frominline?: boolean) {
     if (deviceList.length === 0) return;
     this.isLoadingSaveObj[Tables.appDependencyMigrationTable] = true;
@@ -815,6 +1088,7 @@ export class PopupFormComponent implements OnInit {
       .catch((err) => { console.log("error while saving app dep data", err) })
       .finally(() => { this.isLoadingSaveObj[Tables.appDependencyMigrationTable] = false; })
   }
+
   isObjEqual(o1: {}, o2: {}) {
     if (o1 === o2) return true;
     const keys1 = Object.keys(o1);
@@ -822,6 +1096,7 @@ export class PopupFormComponent implements OnInit {
     if (keys1.length !== keys2.length) return false;
     return keys1.every(key => o1[key] === o2[key]);
   }
+
   canceldevice(device: any) {
     this.showalert = false;
     for (let field in device.isEditingFields) {
@@ -839,9 +1114,11 @@ export class PopupFormComponent implements OnInit {
     device.editing = false;
     this.removeFromInlineList(device);
   }
+
   removeFromInlineList(device: any) {
     this.inlineEditItems = this.inlineEditItems.filter(i => { if (device.index !== i.index) return i })
   }
+
   exporttoCSV(reportType: string) {
     if (!reportType) return;
     this.downloadPanel = false;
@@ -860,13 +1137,17 @@ export class PopupFormComponent implements OnInit {
       .catch(err => console.log("error while downloading mp file"))
       .finally(() => {this.isDownloading = false});
   }
+
   toggelDownloadPanal() {
     this.downloadPanel = !this.downloadPanel;
   }
+
   toggleCollapse(block: string) {
     this.isCollapsedObj[block] = !this.isCollapsedObj[block];
   }
+
   serviceGroupChanges(event: MatRadioChange) {
     this.popupAppDepData['serviceGroup'] = event.value;
   }
+
 }
